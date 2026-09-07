@@ -1,0 +1,139 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Ichijo AI Labは、AIとともに学び、学校や地域の課題を解決する一条高校のラボです。">
+  <meta name="theme-color" content="#090616">
+  <title>Ichijo AI Lab | AIと未来を共創する</title>
+  <link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+  <a class="skip-link" href="#main">本文へ移動</a>
+  <header class="site-header">
+    <a class="brand" href="#top" aria-label="Ichijo AI Lab ホーム">
+      <span class="brand-mark">AI</span>
+      <span>Ichijo AI Lab</span>
+    </a>
+    <button class="menu-button" type="button" aria-expanded="false" aria-controls="global-nav">MENU</button>
+    <nav id="global-nav" class="global-nav" aria-label="メインメニュー">
+      <a href="#about">私たちについて</a>
+      <a href="#apps">制作アプリ</a>
+      <a href="#blog">ブログ</a>
+      <a href="#request">ご依頼</a>
+      <a href="#contact">お問い合わせ</a>
+    </nav>
+  </header>
+
+  <main id="main">
+    <section id="top" class="hero">
+      <div class="hero-grid" aria-hidden="true"></div>
+      <div class="hero-orb hero-orb-a" aria-hidden="true"></div>
+      <div class="hero-orb hero-orb-b" aria-hidden="true"></div>
+      <div class="hero-content reveal">
+        <p class="eyebrow">ICHijo High School · Student AI Lab</p>
+        <h1>Be Pioneers.<br><span>Create the Future</span><br>with AI.</h1>
+        <p class="hero-copy">AIを使うだけの「ユーザー」から、未来をつくる「パイオニア」へ。<br>私たちは、学校と地域の課題に向き合い、AIとともに答えを形にします。</p>
+        <div class="hero-actions">
+          <a class="button button-primary" href="#apps">私たちの開発を見る</a>
+          <a class="button button-ghost" href="#request">一緒につくる</a>
+        </div>
+      </div>
+      <div class="hero-console reveal" aria-label="Ichijo AI Labの活動方針">
+        <div class="console-bar"><span></span><span></span><span></span><b>MISSION://ICHJO_AI_LAB</b></div>
+        <div class="console-body">
+          <p><small>MISSION 01</small> 教科学習に役立つ開発</p>
+          <p><small>MISSION 02</small> 地域や身近な課題の解決</p>
+          <div class="pulse-line"><i></i><span>AI BUDDY ONLINE</span></div>
+        </div>
+      </div>
+      <a class="scroll-cue" href="#about">SCROLL <span>↓</span></a>
+    </section>
+
+    <section id="about" class="section about-section">
+      <div class="section-heading reveal">
+        <p class="eyebrow">ABOUT US</p>
+        <h2>AIは、未来をともに<br>つくる<span>「相棒」</span>。</h2>
+      </div>
+      <div class="about-layout">
+        <div class="about-copy reveal">
+          <p class="lead">私たちは事例紹介をするためだけに集まったのではありません。自分たちの意思で、教育と地域の未来を変える挑戦を始めました。</p>
+          <p>AIの便利さだけでなく、ハルシネーション、バイアス、依存といった危険性にも向き合います。情報の真偽を人が確かめ、考えることを手放さない。そのうえで、AIを発展の相棒として活用します。</p>
+        </div>
+        <div class="stats-grid reveal">
+          <article class="stat-card"><strong data-count="50">50</strong><span>5か月で生まれた制作物</span></article>
+          <article class="stat-card"><strong>2</strong><span>学習と地域課題、2つのMission</span></article>
+          <article class="stat-card wide"><strong>1</strong><span>未来を動かす、私たち自身の一歩</span></article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section mission-section">
+      <div class="mission-card reveal">
+        <span class="mission-number">01</span>
+        <div><p class="eyebrow">LEARNING</p><h3>学びを、もっと深く。<br>もっと楽しく。</h3><p>英語・数学・理科など、つまずきを発見し、自分で考える力を育てる学習体験を開発します。</p></div>
+      </div>
+      <div class="mission-card reveal">
+        <span class="mission-number">02</span>
+        <div><p class="eyebrow">LOCAL ACTION</p><h3>身近な「困った」を、<br>つくる力で変える。</h3><p>奈良の鹿や地域の暮らしなど、すぐそばにある課題をゲームやアプリで伝わる形にします。</p></div>
+      </div>
+    </section>
+
+    <section id="apps" class="section projects-section">
+      <div class="section-heading reveal">
+        <p class="eyebrow">OUR CREATIONS</p>
+        <h2>「ほしい」で終わらせず、<br><span>つくる。</span></h2>
+        <p>AIと対話し、試し、失敗し、改善して生まれたプロジェクトです。</p>
+      </div>
+      <div id="app-list" class="project-grid" aria-live="polite"></div>
+    </section>
+
+    <section id="blog" class="section blog-section">
+      <div class="section-heading row reveal">
+        <div><p class="eyebrow">LAB JOURNAL</p><h2>挑戦の記録</h2></div>
+        <p>完成したものだけでなく、考えたことや失敗も残します。</p>
+      </div>
+      <div id="blog-list" class="blog-grid" aria-live="polite"></div>
+    </section>
+
+    <section id="request" class="section form-section">
+      <div class="form-intro reveal">
+        <p class="eyebrow">REQUEST</p>
+        <h2>一緒に、課題を<br><span>アイデアへ。</span></h2>
+        <p>授業で使うツール、イベントでのAI体験、地域課題を伝えるゲームなど。「こんなことはできる？」から気軽にご相談ください。</p>
+        <ul class="check-list"><li>アプリ・ゲームの企画や制作</li><li>AI活用の発表・ワークショップ</li><li>学校・地域との共同プロジェクト</li></ul>
+      </div>
+      <form class="lab-form reveal" data-form-name="依頼">
+        <div class="field-row"><label>お名前<input name="name" autocomplete="name" required></label><label>所属・団体名<input name="organization" autocomplete="organization"></label></div>
+        <label>メールアドレス<input type="email" name="email" autocomplete="email" required></label>
+        <label>ご依頼の種類<select name="type" required><option value="">選択してください</option><option>アプリ・ゲーム制作</option><option>発表・ワークショップ</option><option>共同プロジェクト</option><option>その他</option></select></label>
+        <label>ご依頼内容<textarea name="message" rows="6" placeholder="目的、対象、希望時期などをご記入ください" required></textarea></label>
+        <button class="button button-primary" type="submit">依頼内容を送信する</button>
+        <p class="form-note">現在は試作版です。送信内容はこの端末内に保存されます。</p>
+        <p class="form-status" role="status"></p>
+      </form>
+    </section>
+
+    <section id="contact" class="section contact-section">
+      <div class="contact-card reveal">
+        <div><p class="eyebrow">CONTACT</p><h2>話すことから、<br>未来は動き出す。</h2><p>活動への質問、取材、見学などはこちらからお問い合わせください。</p></div>
+        <form class="compact-form" data-form-name="問い合わせ">
+          <label>お名前<input name="name" autocomplete="name" required></label>
+          <label>メールアドレス<input type="email" name="email" autocomplete="email" required></label>
+          <label>お問い合わせ内容<textarea name="message" rows="4" required></textarea></label>
+          <button class="button button-light" type="submit">送信する</button>
+          <p class="form-note">現在は試作版です。送信内容はこの端末内に保存されます。</p>
+          <p class="form-status" role="status"></p>
+        </form>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div><a class="brand" href="#top"><span class="brand-mark">AI</span><span>Ichijo AI Lab</span></a><p>Be Pioneers. Create the Future with AI.</p></div>
+    <div class="footer-links"><a href="#about">About</a><a href="#apps">Apps</a><a href="#blog">Blog</a><a href="#request">Request</a><a href="admin.html">管理者ページ</a></div>
+    <small>© <span id="year"></span> Ichijo AI Lab</small>
+  </footer>
+  <script src="assets/app.js"></script>
+</body>
+</html>
