@@ -10,7 +10,9 @@
 
 ## 現在のデータ保存
 
-初版ではブラウザの `localStorage` を使用しています。管理画面の変更とフォーム送信は、同じ端末・同じブラウザでのみ確認できます。本番運用時は認証と共有データベースへの接続が必要です。
+Supabaseを利用して、管理者認証、アプリ・ブログ・お問い合わせの共有保存を行います。初回のみSupabaseのSQL Editorで `supabase-setup.sql` を実行し、Authenticationから管理者ユーザーを作成してください。
+
+お問い合わせはSupabaseの管理画面に保存され、FormSubmit経由で通知メールも送信されます。最初の送信時に届くFormSubmitの有効化メールを承認してください。
 
 ## GitHub Pages
 

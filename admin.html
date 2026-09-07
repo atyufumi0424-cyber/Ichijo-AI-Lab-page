@@ -9,11 +9,20 @@
   <link rel="stylesheet" href="assets/style.css">
 </head>
 <body class="admin-page">
+  <section id="login-screen" class="login-screen">
+    <form id="login-form" class="login-card">
+      <a class="brand" href="index.html"><span class="brand-mark">AI</span><span>Ichijo AI Lab</span></a>
+      <p class="eyebrow">ADMIN LOGIN</p><h1>管理者ログイン</h1><p>登録済みの管理者メールアドレスとパスワードを入力してください。</p>
+      <label>メールアドレス<input type="email" name="email" autocomplete="username" required></label>
+      <label>パスワード<input type="password" name="password" autocomplete="current-password" required minlength="8"></label>
+      <button class="button button-primary" type="submit">ログイン</button><p id="login-status" class="form-status" role="status"></p>
+    </form>
+  </section>
   <header class="admin-header">
     <a class="brand" href="index.html"><span class="brand-mark">AI</span><span>Ichijo AI Lab</span></a>
-    <a class="button button-ghost small" href="index.html">閲覧ページへ</a>
+    <div class="admin-header-actions"><span id="admin-email"></span><button id="logout-button" class="button button-danger small" type="button">ログアウト</button><a class="button button-ghost small" href="index.html">閲覧ページへ</a></div>
   </header>
-  <main class="admin-shell">
+  <main class="admin-shell" hidden>
     <aside class="admin-sidebar">
       <p class="eyebrow">ADMIN CONSOLE</p>
       <h1>管理者ページ</h1>
@@ -42,6 +51,8 @@
       </section>
     </div>
   </main>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="assets/config.js"></script>
   <script src="assets/app.js"></script>
 </body>
 </html>
