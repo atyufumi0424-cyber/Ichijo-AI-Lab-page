@@ -5,11 +5,7 @@ const defaults = {
     { id: 'app-3', title: '数学ドリル エコマイナー', category: 'MATHEMATICS', description: '問題を解きながら資源を集める、学習と達成感を組み合わせた数学ドリル。', accent: 'yellow', url: '' },
     { id: 'app-4', title: '鹿を守るゲーム', category: 'LOCAL ACTION', description: '奈良の鹿がごみを食べる問題を、遊びながら知り行動につなげるゲーム。', accent: 'purple', url: '' }
   ],
-  posts: [
-    { id: 'post-1', date: '2026-09-17', title: 'AIバディ活用探究、始動。', excerpt: 'AIを学習や身近な問題の解決にどう役立てられるのか。私たちの探究が始まりました。' },
-    { id: 'post-2', date: '2026-08-24', title: 'AIの「本当の姿」と向き合う', excerpt: '便利さの裏にあるハルシネーションやバイアス。危険性を知ることから共創は始まります。' },
-    { id: 'post-3', date: '2026-07-30', title: '5か月で50のアイデアを形に', excerpt: '「ほしい」ではなく「つくる」。試行錯誤から生まれた制作物を振り返ります。' }
-  ]
+  posts: []
 };
 
 const store = {
@@ -27,7 +23,10 @@ function renderPublic() {
   const appList = document.querySelector('#app-list');
   if (appList) {
     const apps = store.get('apps');
-    appList.innerHTML = apps.length ? apps.map((app, i) => `<article class="project-card accent-${escapeHTML(app.accent || ['pink','cyan','yellow','purple'][i % 4])} reveal"><div class="project-top"><span>${String(i + 1).padStart(2, '0')}</span><small>${escapeHTML(app.category)}</small></div><div class="project-visual" aria-hidden="true"><b>${escapeHTML(app.title.slice(0, 1))}</b><i></i></div><h3>${escapeHTML(app.title)}</h3><p>${escapeHTML(app.description)}</p>${app.url ? `<a href="${escapeHTML(app.url)}" target="_blank" rel="noopener">アプリを開く <span>↗</span></a>` : '<span class="coming-soon">COMING SOON</span>'}</article>`).join('') : '<p class="empty-state">公開中のアプリはありません。</p>';
+    appList.innerHTML = apps.length ? apps.map((app, i) => {
+      const action = app.code ? `<a href="runner.html?id=${encodeURIComponent(app.id)}">ブラウザで開く <span>→</span></a>` : app.url ? `<a href="${escapeHTML(app.url)}" target="_blank" rel="noopener">アプリを開く <span>↗</span></a>` : '<span class="coming-soon">COMING SOON</span>';
+      return `<article class="project-card accent-${escapeHTML(app.accent || ['pink','cyan','yellow','purple'][i % 4])} reveal"><div class="project-top"><span>${String(i + 1).padStart(2, '0')}</span><small>${escapeHTML(app.category)}</small></div><div class="project-visual" aria-hidden="true"><b>${escapeHTML(app.title.slice(0, 1))}</b><i></i></div><h3>${escapeHTML(app.title)}</h3><p>${escapeHTML(app.description)}</p>${action}</article>`;
+    }).join('') : '<p class="empty-state">公開中のアプリはありません。</p>';
   }
   const blogList = document.querySelector('#blog-list');
   if (blogList) {
@@ -67,17 +66,39 @@ function initAdmin() {
     document.querySelector('#app-count').textContent = apps.length;
     document.querySelector('#post-count').textContent = posts.length;
     document.querySelector('#message-count').textContent = messages.length;
-    document.querySelector('#admin-app-list').innerHTML = apps.length ? apps.map(x => `<article><div><small>${escapeHTML(x.category)}</small><h3>${escapeHTML(x.title)}</h3><p>${escapeHTML(x.description)}</p></div><button class="delete-button" data-delete-app="${escapeHTML(x.id)}">削除</button></article>`).join('') : '<p class="empty-state">アプリはありません。</p>';
+    document.querySelector('#admin-app-list').innerHTML = apps.length ? apps.map(x => `<article><div><small>${escapeHTML(x.category)}${x.code ? ' · CODE READY' : ''}</small><h3>${escapeHTML(x.title)}</h3><p>${escapeHTML(x.description)}</p>${x.code ? `<a class="admin-preview-link" href="runner.html?id=${encodeURIComponent(x.id)}" target="_blank">プレビューを開く ↗</a>` : ''}</div><button class="delete-button" data-delete-app="${escapeHTML(x.id)}">削除</button></article>`).join('') : '<p class="empty-state">アプリはありません。</p>';
     document.querySelector('#admin-post-list').innerHTML = posts.length ? posts.map(x => `<article><div><small>${escapeHTML(formatDate(x.date))}</small><h3>${escapeHTML(x.title)}</h3><p>${escapeHTML(x.excerpt)}</p></div><button class="delete-button" data-delete-post="${escapeHTML(x.id)}">削除</button></article>`).join('') : '<p class="empty-state">記事はありません。</p>';
     document.querySelector('#admin-message-list').innerHTML = messages.length ? messages.map(x => `<article class="message-item"><div><small>${escapeHTML(x.kind)} · ${escapeHTML(new Date(x.receivedAt).toLocaleString('ja-JP'))}</small><h3>${escapeHTML(x.name)}</h3><p><a href="mailto:${escapeHTML(x.email)}">${escapeHTML(x.email)}</a>${x.organization ? ` · ${escapeHTML(x.organization)}` : ''}</p><p>${escapeHTML(x.message)}</p></div></article>`).join('') : '<p class="empty-state">受信内容はありません。</p>';
   };
-  document.querySelector('#app-form').addEventListener('submit', e => { e.preventDefault(); const data = Object.fromEntries(new FormData(e.currentTarget)); const apps = store.get('apps'); apps.unshift({id:`app-${Date.now()}`, accent:['pink','cyan','yellow','purple'][apps.length % 4], ...data}); store.set('apps', apps); e.currentTarget.reset(); render(); });
+  document.querySelector('#app-form').addEventListener('submit', e => { e.preventDefault(); const data = Object.fromEntries(new FormData(e.currentTarget)); const apps = store.get('apps'); const processedCode = prepareAppCode(data.code); apps.unshift({id:`app-${Date.now()}`, accent:['pink','cyan','yellow','purple'][apps.length % 4], ...data, code:processedCode}); store.set('apps', apps); e.currentTarget.reset(); render(); });
   document.querySelector('#post-form').addEventListener('submit', e => { e.preventDefault(); const data = Object.fromEntries(new FormData(e.currentTarget)); const posts = store.get('posts'); posts.unshift({id:`post-${Date.now()}`, ...data}); store.set('posts', posts); e.currentTarget.reset(); render(); });
   document.addEventListener('click', e => { const appId = e.target.dataset?.deleteApp, postId = e.target.dataset?.deletePost; if (appId) { store.set('apps', store.get('apps').filter(x => x.id !== appId)); render(); } if (postId) { store.set('posts', store.get('posts').filter(x => x.id !== postId)); render(); } });
   document.querySelector('#clear-messages').addEventListener('click', () => { if (confirm('受信内容をすべて削除しますか？')) { store.set('messages', []); render(); } });
   render();
 }
 
+function prepareAppCode(raw = '') {
+  const code = raw.trim();
+  if (!code) return '';
+  if (/<!doctype|<html[\s>]|<body[\s>]/i.test(code)) return code;
+  if (/<[a-z][\s\S]*>/i.test(code)) return `<!doctype html><html lang="ja"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><style>body{font-family:system-ui,sans-serif;margin:0;padding:24px}</style></head><body>${code}</body></html>`;
+  if (/\b(function|const|let|var|document\.|window\.|addEventListener|=>)\b/.test(code)) return `<!doctype html><html lang="ja"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><style>body{font-family:system-ui,sans-serif;margin:0;padding:24px}</style></head><body><main id="app"></main><script>${code}<\/script></body></html>`;
+  return `<!doctype html><html lang="ja"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><style>${code}</style></head><body><main id="app">アプリのHTMLを追加してください。</main></body></html>`;
+}
+
+function initRunner() {
+  const frame = document.querySelector('#app-frame');
+  if (!frame) return;
+  const id = new URLSearchParams(location.search).get('id');
+  const app = store.get('apps').find(item => item.id === id);
+  const error = document.querySelector('#runner-error');
+  if (!app?.code) { error.hidden = false; error.textContent = 'この端末にはアプリコードが保存されていません。管理者ページからコードを登録してください。'; frame.hidden = true; return; }
+  document.title = `${app.title} | Ichijo AI Lab`;
+  document.querySelector('#runner-title').textContent = app.title;
+  frame.srcdoc = app.code;
+}
+
 renderPublic();
 initCommon();
 initAdmin();
+initRunner();

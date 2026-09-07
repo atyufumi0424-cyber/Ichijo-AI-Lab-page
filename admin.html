@@ -28,7 +28,7 @@
       </section>
       <section class="admin-panel" id="panel-apps">
         <div class="admin-title"><div><p class="eyebrow">APPLICATIONS</p><h2>アプリ管理</h2></div></div>
-        <form id="app-form" class="admin-form"><label>アプリ名<input name="title" required></label><label>カテゴリ<input name="category" placeholder="学習 / 地域課題" required></label><label>説明<textarea name="description" rows="3" required></textarea></label><label>リンク（任意）<input type="url" name="url" placeholder="https://"></label><button class="button button-primary" type="submit">アプリを追加</button></form>
+        <form id="app-form" class="admin-form"><label>アプリ名<input name="title" required></label><label>カテゴリ<input name="category" placeholder="学習 / 地域課題" required></label><label>説明<textarea name="description" rows="3" required></textarea></label><label>外部リンク（任意）<input type="url" name="url" placeholder="https://"></label><label class="code-field">アプリコード<textarea name="code" rows="12" spellcheck="false" placeholder="HTML・CSS・JavaScriptを貼り付けてください。コードの種類を自動判定し、ブラウザで実行できる形に整えます。"></textarea></label><p class="code-help">1つのHTMLファイルにまとめたコードがおすすめです。CSSだけ、JavaScriptだけでも簡易ページに変換できます。</p><button class="button button-primary" type="submit">処理してアプリを追加</button></form>
         <div id="admin-app-list" class="admin-list"></div>
       </section>
       <section class="admin-panel" id="panel-posts">
