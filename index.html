@@ -22,8 +22,7 @@
       <a href="#about">私たちについて</a>
       <a href="#apps">制作アプリ</a>
       <a href="#blog">ブログ</a>
-      <a href="#request">ご依頼</a>
-      <a href="#contact">お問い合わせ</a>
+      <a href="#request">ご依頼・お問い合わせ</a>
     </nav>
   </header>
 
@@ -100,40 +99,26 @@
 
     <section id="request" class="section form-section">
       <div class="form-intro reveal">
-        <p class="eyebrow">REQUEST</p>
-        <h2>一緒に、課題を<br><span>アイデアへ。</span></h2>
-        <p>授業で使うツール、イベントでのAI体験、地域課題を伝えるゲームなど。「こんなことはできる？」から気軽にご相談ください。</p>
-        <ul class="check-list"><li>アプリ・ゲームの企画や制作</li><li>AI活用の発表・ワークショップ</li><li>学校・地域との共同プロジェクト</li></ul>
+        <p class="eyebrow">CONTACT &amp; REQUEST</p>
+        <h2>ご依頼も、質問も、<br><span>ここから。</span></h2>
+        <p>制作のご相談、活動への質問、取材や見学など、内容を問わずこちらから気軽にお送りください。</p>
+        <ul class="check-list"><li>アプリ・ゲームの企画や制作</li><li>AI活用の発表・ワークショップ</li><li>活動への質問・取材・見学</li></ul>
       </div>
-      <form class="lab-form reveal" data-form-name="依頼">
+      <form class="lab-form reveal" data-form-name="ご依頼・お問い合わせ">
         <div class="field-row"><label>お名前<input name="name" autocomplete="name" required></label><label>所属・団体名<input name="organization" autocomplete="organization"></label></div>
         <label>メールアドレス<input type="email" name="email" autocomplete="email" required></label>
-        <label>ご依頼の種類<select name="type" required><option value="">選択してください</option><option>アプリ・ゲーム制作</option><option>発表・ワークショップ</option><option>共同プロジェクト</option><option>その他</option></select></label>
-        <label>ご依頼内容<textarea name="message" rows="6" placeholder="目的、対象、希望時期などをご記入ください" required></textarea></label>
-        <button class="button button-primary" type="submit">依頼内容を送信する</button>
-        <p class="form-note">現在は試作版です。送信内容はこの端末内に保存されます。</p>
+        <label>内容の種類<select name="type" required><option value="">選択してください</option><option>アプリ・ゲーム制作</option><option>発表・ワークショップ</option><option>共同プロジェクト</option><option>活動への質問</option><option>取材・見学</option><option>その他</option></select></label>
+        <label>内容<textarea name="message" rows="6" placeholder="ご相談・ご質問の内容をご記入ください" required></textarea></label>
+        <button class="button button-primary" type="submit">送信する</button>
+        <p class="form-note">送信内容はIchijo AI Labの管理者に届きます。</p>
         <p class="form-status" role="status"></p>
       </form>
-    </section>
-
-    <section id="contact" class="section contact-section">
-      <div class="contact-card reveal">
-        <div><p class="eyebrow">CONTACT</p><h2>話すことから、<br>未来は動き出す。</h2><p>活動への質問、取材、見学などはこちらからお問い合わせください。</p></div>
-        <form class="compact-form" data-form-name="問い合わせ">
-          <label>お名前<input name="name" autocomplete="name" required></label>
-          <label>メールアドレス<input type="email" name="email" autocomplete="email" required></label>
-          <label>お問い合わせ内容<textarea name="message" rows="4" required></textarea></label>
-          <button class="button button-light" type="submit">送信する</button>
-          <p class="form-note">現在は試作版です。送信内容はこの端末内に保存されます。</p>
-          <p class="form-status" role="status"></p>
-        </form>
-      </div>
     </section>
   </main>
 
   <footer class="site-footer">
     <div><a class="brand" href="#top"><span class="brand-mark">AI</span><span>Ichijo AI Lab</span></a><p>Be Pioneers. Create the Future with AI.</p></div>
-    <div class="footer-links"><a href="#about">About</a><a href="#apps">Apps</a><a href="#blog">Blog</a><a href="#request">Request</a></div>
+    <div class="footer-links"><a href="#about">About</a><a href="#apps">Apps</a><a href="#blog">Blog</a><a href="#request">Contact</a></div>
     <small>© <span id="year"></span> Ichijo AI Lab</small>
   </footer>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
