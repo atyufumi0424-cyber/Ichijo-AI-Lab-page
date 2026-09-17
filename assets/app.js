@@ -1,11 +1,6 @@
 const config = window.ICHJO_LAB_CONFIG || {};
 const db = window.supabase?.createClient(config.supabaseUrl, config.supabasePublishableKey);
-const defaultApps = [
-  { id:'sample-1', title:'英会話 AIバディ', category:'ENGLISH', description:'AIが生徒役になり、教えることで三人称単数現在形を学べる対話型アプリ。', accent:'pink', url:'', code:'' },
-  { id:'sample-2', title:'スーパー地層マスターズ', category:'SCIENCE', description:'地層の見方や地学の知識を、ゲーム感覚で身につける学習アプリ。', accent:'cyan', url:'', code:'' },
-  { id:'sample-3', title:'数学ドリル エコマイナー', category:'MATHEMATICS', description:'問題を解きながら資源を集める、学習と達成感を組み合わせた数学ドリル。', accent:'yellow', url:'', code:'' },
-  { id:'sample-4', title:'鹿を守るゲーム', category:'LOCAL ACTION', description:'奈良の鹿がごみを食べる問題を、遊びながら知り行動につなげるゲーム。', accent:'purple', url:'', code:'' }
-];
+const defaultApps = [];
 const escapeHTML = (value='') => String(value).replace(/[&<>'"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]));
 const formatDate = value => { const d = new Date(`${value}T00:00:00`); return Number.isNaN(d.getTime()) ? value : new Intl.DateTimeFormat('ja-JP',{year:'numeric',month:'long',day:'numeric'}).format(d); };
 
@@ -23,7 +18,7 @@ async function getPosts() {
 
 async function renderPublic() {
   const appList=document.querySelector('#app-list');
-  if(appList){const apps=await getApps();appList.innerHTML=apps.map((app,i)=>{const action=app.code?`<a href="runner.html?id=${encodeURIComponent(app.id)}">ブラウザで開く <span>→</span></a>`:app.url?`<a href="${escapeHTML(app.url)}" target="_blank" rel="noopener">アプリを開く <span>↗</span></a>`:'<span class="coming-soon">COMING SOON</span>';return `<article class="project-card accent-${escapeHTML(app.accent||['pink','cyan','yellow','purple'][i%4])} reveal visible"><div class="project-top"><span>${String(i+1).padStart(2,'0')}</span><small>${escapeHTML(app.category)}</small></div><div class="project-visual" aria-hidden="true"><b>${escapeHTML(app.title.slice(0,1))}</b><i></i></div><h3>${escapeHTML(app.title)}</h3><p>${escapeHTML(app.description)}</p>${action}</article>`}).join('')}
+  if(appList){const apps=await getApps();appList.innerHTML=apps.length?apps.map((app,i)=>{const action=app.code?`<a href="runner.html?id=${encodeURIComponent(app.id)}">ブラウザで開く <span>→</span></a>`:app.url?`<a href="${escapeHTML(app.url)}" target="_blank" rel="noopener">アプリを開く <span>↗</span></a>`:'<span class="coming-soon">COMING SOON</span>';return `<article class="project-card accent-${escapeHTML(app.accent||['pink','cyan','yellow','purple'][i%4])} reveal visible"><div class="project-top"><span>${String(i+1).padStart(2,'0')}</span><small>${escapeHTML(app.category)}</small></div><div class="project-visual" aria-hidden="true"><b>${escapeHTML(app.title.slice(0,1))}</b><i></i></div><h3>${escapeHTML(app.title)}</h3><p>${escapeHTML(app.description)}</p>${action}</article>`}).join(''):'<p class="empty-state">現在、公開中の作品はありません。</p>'}
   const blogList=document.querySelector('#blog-list');
   if(blogList){const posts=await getPosts();blogList.innerHTML=posts.length?posts.map(post=>`<article class="blog-card reveal visible">${post.image_url?`<img class="blog-image" src="${escapeHTML(post.image_url)}" alt="${escapeHTML(post.title)}" loading="lazy">`:''}<div class="blog-card-body"><time datetime="${escapeHTML(post.published_on)}">${escapeHTML(formatDate(post.published_on))}</time><h3>${escapeHTML(post.title)}</h3><p>${escapeHTML(post.excerpt)}</p><span class="read-more">ACTIVITY REPORT</span></div></article>`).join(''):'<p class="empty-state">記事はまだありません。最初の活動記録を準備中です。</p>'}
 }
