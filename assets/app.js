@@ -37,10 +37,14 @@ async function submitMessage(event){
   const values=Object.fromEntries(new FormData(form));button.disabled=true;status.textContent='送信しています…';
   const record={kind:form.dataset.formName,name:values.name,email:values.email,organization:values.organization||'',request_type:values.type||'',message:values.message};
   try{
-    if(!db)throw new Error('接続設定がありません');
-    const {error}=await db.from('messages').insert(record);if(error)throw error;
-    fetch(`https://formsubmit.co/ajax/${encodeURIComponent(config.notificationEmail)}`,{method:'POST',headers:{'Content-Type':'application/json','Accept':'application/json'},body:JSON.stringify({_subject:`Ichijo AI Lab：${record.kind}が届きました`,種別:record.kind,お名前:record.name,メールアドレス:record.email,所属:record.organization,依頼の種類:record.request_type,内容:record.message,_template:'table'})}).catch(()=>{});
-    form.reset();status.textContent='ありがとうございます。内容を送信しました。';
+    const databaseRequest=db?db.from('messages').insert(record):Promise.resolve({error:new Error('接続設定がありません')});
+    const emailRequest=fetch(`https://formsubmit.co/ajax/${encodeURIComponent(config.notificationEmail)}`,{method:'POST',headers:{'Content-Type':'application/json','Accept':'application/json'},body:JSON.stringify({_subject:`Ichijo AI Lab：${record.kind}が届きました`,種別:record.kind,お名前:record.name,メールアドレス:record.email,所属:record.organization,依頼の種類:record.request_type,内容:record.message,_template:'table'})}).then(async response=>{const result=await response.json().catch(()=>({}));if(!response.ok||String(result.success)==='false')throw new Error(result.message||'メール通知に失敗しました');return result});
+    const [databaseResult,emailResult]=await Promise.allSettled([databaseRequest,emailRequest]);
+    const databaseSaved=databaseResult.status==='fulfilled'&&!databaseResult.value.error;
+    const emailSent=emailResult.status==='fulfilled';
+    if(!databaseSaved&&!emailSent)throw new Error('送信先へ接続できませんでした');
+    form.reset();
+    status.textContent=databaseSaved&&emailSent?'ありがとうございます。内容を送信しました。':emailSent?'ありがとうございます。メールで内容を送信しました。':'内容を管理者ページに保存しました。メール通知は現在確認中です。';
   }catch(error){console.error(error);status.textContent='送信できませんでした。入力内容を残したまま、時間をおいて再度お試しください。'}finally{button.disabled=false}
 }
 
