@@ -36,10 +36,11 @@ async function submitMessage(event){
   event.preventDefault();const form=event.currentTarget,status=form.querySelector('.form-status'),button=form.querySelector('button[type="submit"]');
   const values=Object.fromEntries(new FormData(form));button.disabled=true;status.textContent='送信しています…';
   const record={kind:form.dataset.formName,name:values.name,email:values.email,organization:values.organization||'',request_type:values.type||'',message:values.message};
+  const submittedAtJst=new Intl.DateTimeFormat('ja-JP',{timeZone:'Asia/Tokyo',year:'numeric',month:'long',day:'numeric',weekday:'short',hour:'2-digit',minute:'2-digit',second:'2-digit',hour12:false}).format(new Date());
   try{
     const databaseRequest=db?db.from('messages').insert(record):Promise.resolve({error:new Error('接続設定がありません')});
     const emailDestination=config.formSubmitEndpoint||config.notificationEmail;
-    const emailRequest=fetch(`https://formsubmit.co/ajax/${encodeURIComponent(emailDestination)}`,{method:'POST',headers:{'Content-Type':'application/json','Accept':'application/json'},body:JSON.stringify({_subject:`Ichijo AI Lab：${record.kind}が届きました`,種別:record.kind,お名前:record.name,メールアドレス:record.email,所属:record.organization,依頼の種類:record.request_type,内容:record.message,_template:'table'})}).then(async response=>{const result=await response.json().catch(()=>({}));if(!response.ok||String(result.success)==='false')throw new Error(result.message||'メール通知に失敗しました');return result});
+    const emailRequest=fetch(`https://formsubmit.co/ajax/${encodeURIComponent(emailDestination)}`,{method:'POST',headers:{'Content-Type':'application/json','Accept':'application/json'},body:JSON.stringify({_subject:`【Ichijo AI Lab】${record.kind}を受け付けました`,'送信日時（日本時間）':submittedAtJst,種別:record.kind,お名前:record.name,メールアドレス:record.email,所属:record.organization,依頼の種類:record.request_type,内容:record.message,_template:'table'})}).then(async response=>{const result=await response.json().catch(()=>({}));if(!response.ok||String(result.success)==='false')throw new Error(result.message||'メール通知に失敗しました');return result});
     const [databaseResult,emailResult]=await Promise.allSettled([databaseRequest,emailRequest]);
     const databaseSaved=databaseResult.status==='fulfilled'&&!databaseResult.value.error;
     const emailSent=emailResult.status==='fulfilled';
