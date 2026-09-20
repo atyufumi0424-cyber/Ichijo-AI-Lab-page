@@ -1,4 +1,6 @@
 .blog-card { padding: 0; border-radius: 18px; overflow: hidden; }
-.blog-image { display: block; width: 100%; height: 210px; object-fit: cover; background: #e8eaf4; }
-.blog-card-body { display: flex; flex: 1; flex-direction: column; padding: 2rem; }
-.blog-card-body h3 { margin-top: 1.6rem; }
+.blog-card-link { min-height: 0; border: 1px solid rgba(38,29,73,.1); transition: transform .2s ease, box-shadow .2s ease; }
+.blog-card-link:hover { transform: translateY(-4px); box-shadow: 0 22px 55px rgba(53,34,120,.12); }
+.blog-image { display: block; width: 100%; height: 230px; padding: 12px; object-fit: contain; background: #eef0f8; }
+.blog-card-body { display: flex; flex: 1; flex-direction: column; padding: 1.5rem; }
+.blog-card-body h3 { margin: 0 0 1.2rem; }

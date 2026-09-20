@@ -26,7 +26,17 @@ async function renderPublic() {
   const appList=document.querySelector('#app-list');
   if(appList){const apps=await getApps();appList.innerHTML=apps.length?apps.map((app,i)=>{const action=app.code?`<a href="runner.html?id=${encodeURIComponent(app.id)}">ブラウザで開く <span>→</span></a>`:app.url?`<a href="${escapeHTML(app.url)}" target="_blank" rel="noopener">アプリを開く <span>↗</span></a>`:'<span class="coming-soon">COMING SOON</span>';return `<article class="project-card accent-${escapeHTML(app.accent||['pink','cyan','yellow','purple'][i%4])} reveal visible"><div class="project-top"><span>${String(i+1).padStart(2,'0')}</span><small>${escapeHTML(app.category)}</small></div><div class="project-visual" aria-hidden="true"><b>${escapeHTML(app.title.slice(0,1))}</b><i></i></div><h3>${escapeHTML(app.title)}</h3><p>${escapeHTML(app.description)}</p>${action}</article>`}).join(''):'<p class="empty-state">現在、公開中の作品はありません。</p>'}
   const blogList=document.querySelector('#blog-list');
-  if(blogList){const posts=await getPosts();blogList.innerHTML=posts.length?posts.map(post=>{const content=parsePostContent(post);return `<article class="blog-card reveal visible">${content.image?`<img class="blog-image" src="${escapeHTML(content.image)}" alt="${escapeHTML(post.title)}" loading="lazy">`:''}<div class="blog-card-body"><time datetime="${escapeHTML(post.published_on)}">${escapeHTML(formatDate(post.published_on))}</time><h3>${escapeHTML(post.title)}</h3><p>${escapeHTML(content.text)}</p><span class="read-more">ACTIVITY REPORT</span></div></article>`}).join(''):'<p class="empty-state">記事はまだありません。最初の活動記録を準備中です。</p>'}
+  if(blogList){const posts=await getPosts();blogList.innerHTML=posts.length?posts.map(post=>{const content=parsePostContent(post);return `<a class="blog-card blog-card-link reveal visible" href="blog.html?id=${encodeURIComponent(post.id)}" aria-label="${escapeHTML(post.title)}を読む">${content.image?`<img class="blog-image" src="${escapeHTML(content.image)}" alt="${escapeHTML(post.title)}" loading="lazy">`:''}<div class="blog-card-body"><h3>${escapeHTML(post.title)}</h3><span class="read-more">記事を読む <b>→</b></span></div></a>`}).join(''):'<p class="empty-state">記事はまだありません。最初の活動記録を準備中です。</p>'}
+}
+
+async function initBlogDetail(){
+  const root=document.querySelector('#blog-detail');if(!root)return;
+  const id=new URLSearchParams(location.search).get('id');
+  if(!id||!db){root.innerHTML='<p class="article-error">記事を読み込めませんでした。</p>';return}
+  const {data:post,error}=await db.from('posts').select('*').eq('id',id).maybeSingle();
+  if(error||!post){root.innerHTML='<p class="article-error">記事が見つかりませんでした。</p>';return}
+  const content=parsePostContent(post);document.title=`${post.title} | Ichijo AI Lab`;
+  root.innerHTML=`<p class="eyebrow">ACTIVITY REPORT</p><time datetime="${escapeHTML(post.published_on)}">${escapeHTML(formatDate(post.published_on))}</time><h1>${escapeHTML(post.title)}</h1>${content.image?`<figure><img src="${escapeHTML(content.image)}" alt="${escapeHTML(post.title)}"></figure>`:''}<div class="article-body"><p>${escapeHTML(content.text).replace(/\n/g,'<br>')}</p></div>`;
 }
 
 function initCommon(){
@@ -58,4 +68,4 @@ async function submitMessage(event){
 
 async function initRunner(){const frame=document.querySelector('#app-frame');if(!frame)return;const id=new URLSearchParams(location.search).get('id');const {data:app}=db?await db.from('apps').select('*').eq('id',id).maybeSingle():{data:null};const error=document.querySelector('#runner-error');if(!app?.code){error.hidden=false;error.textContent='アプリコードが見つかりません。管理者ページからコードを登録してください。';frame.hidden=true;return}document.title=`${app.title} | Ichijo AI Lab`;document.querySelector('#runner-title').textContent=app.title;frame.srcdoc=app.code}
 
-initCommon();renderPublic();initRunner();
+initCommon();renderPublic();initBlogDetail();initRunner();
