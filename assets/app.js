@@ -38,7 +38,8 @@ async function submitMessage(event){
   const record={kind:form.dataset.formName,name:values.name,email:values.email,organization:values.organization||'',request_type:values.type||'',message:values.message};
   try{
     const databaseRequest=db?db.from('messages').insert(record):Promise.resolve({error:new Error('接続設定がありません')});
-    const emailRequest=fetch(`https://formsubmit.co/ajax/${encodeURIComponent(config.notificationEmail)}`,{method:'POST',headers:{'Content-Type':'application/json','Accept':'application/json'},body:JSON.stringify({_subject:`Ichijo AI Lab：${record.kind}が届きました`,種別:record.kind,お名前:record.name,メールアドレス:record.email,所属:record.organization,依頼の種類:record.request_type,内容:record.message,_template:'table'})}).then(async response=>{const result=await response.json().catch(()=>({}));if(!response.ok||String(result.success)==='false')throw new Error(result.message||'メール通知に失敗しました');return result});
+    const emailDestination=config.formSubmitEndpoint||config.notificationEmail;
+    const emailRequest=fetch(`https://formsubmit.co/ajax/${encodeURIComponent(emailDestination)}`,{method:'POST',headers:{'Content-Type':'application/json','Accept':'application/json'},body:JSON.stringify({_subject:`Ichijo AI Lab：${record.kind}が届きました`,種別:record.kind,お名前:record.name,メールアドレス:record.email,所属:record.organization,依頼の種類:record.request_type,内容:record.message,_template:'table'})}).then(async response=>{const result=await response.json().catch(()=>({}));if(!response.ok||String(result.success)==='false')throw new Error(result.message||'メール通知に失敗しました');return result});
     const [databaseResult,emailResult]=await Promise.allSettled([databaseRequest,emailRequest]);
     const databaseSaved=databaseResult.status==='fulfilled'&&!databaseResult.value.error;
     const emailSent=emailResult.status==='fulfilled';
