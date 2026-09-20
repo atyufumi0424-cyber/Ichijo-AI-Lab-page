@@ -1,8 +1,14 @@
 const config = window.ICHJO_LAB_CONFIG || {};
 const db = window.supabase?.createClient(config.supabaseUrl, config.supabasePublishableKey);
 const defaultApps = [];
+const postContentPrefix = '__ICHJO_POST_V1__:';
 const escapeHTML = (value='') => String(value).replace(/[&<>'"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]));
 const formatDate = value => { const d = new Date(`${value}T00:00:00`); return Number.isNaN(d.getTime()) ? value : new Intl.DateTimeFormat('ja-JP',{year:'numeric',month:'long',day:'numeric'}).format(d); };
+const parsePostContent = post => {
+  if(post.image_url)return {text:post.excerpt||'',image:post.image_url};
+  if(!String(post.excerpt||'').startsWith(postContentPrefix))return {text:post.excerpt||'',image:''};
+  try{const content=JSON.parse(post.excerpt.slice(postContentPrefix.length));return {text:content.text||'',image:content.image||''}}catch{return {text:post.excerpt||'',image:''}}
+};
 
 async function getApps() {
   if (!db) return defaultApps;
@@ -20,7 +26,7 @@ async function renderPublic() {
   const appList=document.querySelector('#app-list');
   if(appList){const apps=await getApps();appList.innerHTML=apps.length?apps.map((app,i)=>{const action=app.code?`<a href="runner.html?id=${encodeURIComponent(app.id)}">ブラウザで開く <span>→</span></a>`:app.url?`<a href="${escapeHTML(app.url)}" target="_blank" rel="noopener">アプリを開く <span>↗</span></a>`:'<span class="coming-soon">COMING SOON</span>';return `<article class="project-card accent-${escapeHTML(app.accent||['pink','cyan','yellow','purple'][i%4])} reveal visible"><div class="project-top"><span>${String(i+1).padStart(2,'0')}</span><small>${escapeHTML(app.category)}</small></div><div class="project-visual" aria-hidden="true"><b>${escapeHTML(app.title.slice(0,1))}</b><i></i></div><h3>${escapeHTML(app.title)}</h3><p>${escapeHTML(app.description)}</p>${action}</article>`}).join(''):'<p class="empty-state">現在、公開中の作品はありません。</p>'}
   const blogList=document.querySelector('#blog-list');
-  if(blogList){const posts=await getPosts();blogList.innerHTML=posts.length?posts.map(post=>`<article class="blog-card reveal visible">${post.image_url?`<img class="blog-image" src="${escapeHTML(post.image_url)}" alt="${escapeHTML(post.title)}" loading="lazy">`:''}<div class="blog-card-body"><time datetime="${escapeHTML(post.published_on)}">${escapeHTML(formatDate(post.published_on))}</time><h3>${escapeHTML(post.title)}</h3><p>${escapeHTML(post.excerpt)}</p><span class="read-more">ACTIVITY REPORT</span></div></article>`).join(''):'<p class="empty-state">記事はまだありません。最初の活動記録を準備中です。</p>'}
+  if(blogList){const posts=await getPosts();blogList.innerHTML=posts.length?posts.map(post=>{const content=parsePostContent(post);return `<article class="blog-card reveal visible">${content.image?`<img class="blog-image" src="${escapeHTML(content.image)}" alt="${escapeHTML(post.title)}" loading="lazy">`:''}<div class="blog-card-body"><time datetime="${escapeHTML(post.published_on)}">${escapeHTML(formatDate(post.published_on))}</time><h3>${escapeHTML(post.title)}</h3><p>${escapeHTML(content.text)}</p><span class="read-more">ACTIVITY REPORT</span></div></article>`}).join(''):'<p class="empty-state">記事はまだありません。最初の活動記録を準備中です。</p>'}
 }
 
 function initCommon(){
