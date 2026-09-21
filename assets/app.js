@@ -4,6 +4,12 @@ const defaultApps = [];
 const postContentPrefix = '__ICHJO_POST_V1__:';
 const escapeHTML = (value='') => String(value).replace(/[&<>'"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]));
 const formatDate = value => { const d = new Date(`${value}T00:00:00`); return Number.isNaN(d.getTime()) ? value : new Intl.DateTimeFormat('ja-JP',{year:'numeric',month:'long',day:'numeric'}).format(d); };
+function makeResponsiveAppDocument(code=''){
+  const responsiveHead=`<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><style id="ichijo-responsive-app">html,body{max-width:100%;min-width:0;overflow-x:hidden}body{margin:0!important;padding:clamp(8px,3vw,18px)!important}*,*::before,*::after{box-sizing:border-box}img,video,svg,canvas,iframe{max-width:100%!important;height:auto}main,.container,.wrapper,.app,[id*="game"],[class*="game"]{max-width:100%!important}@media(max-width:600px){h1{font-size:clamp(1.5rem,8vw,2.4rem)!important}button,input,select,textarea{max-width:100%;font-size:16px}}</style>`;
+  if(/<\/head>/i.test(code))return code.replace(/<\/head>/i,`${responsiveHead}</head>`);
+  if(/<body[\s>]/i.test(code))return code.replace(/<body([^>]*)>/i,`${responsiveHead}<body$1>`);
+  return `${responsiveHead}${code}`;
+}
 const parsePostContent = post => {
   if(post.image_url)return {text:post.excerpt||'',image:post.image_url};
   if(!String(post.excerpt||'').startsWith(postContentPrefix))return {text:post.excerpt||'',image:''};
@@ -66,6 +72,6 @@ async function submitMessage(event){
   }catch(error){console.error(error);status.textContent='送信できませんでした。入力内容を残したまま、時間をおいて再度お試しください。'}finally{button.disabled=false}
 }
 
-async function initRunner(){const frame=document.querySelector('#app-frame');if(!frame)return;const id=new URLSearchParams(location.search).get('id');const {data:app}=db?await db.from('apps').select('*').eq('id',id).maybeSingle():{data:null};const error=document.querySelector('#runner-error');if(!app?.code){error.hidden=false;error.textContent='アプリコードが見つかりません。管理者ページからコードを登録してください。';frame.hidden=true;return}document.title=`${app.title} | Ichijo AI Lab`;document.querySelector('#runner-title').textContent=app.title;frame.srcdoc=app.code}
+async function initRunner(){const frame=document.querySelector('#app-frame');if(!frame)return;const id=new URLSearchParams(location.search).get('id');const {data:app}=db?await db.from('apps').select('*').eq('id',id).maybeSingle():{data:null};const error=document.querySelector('#runner-error');if(!app?.code){error.hidden=false;error.textContent='アプリコードが見つかりません。管理者ページからコードを登録してください。';frame.hidden=true;return}document.title=`${app.title} | Ichijo AI Lab`;document.querySelector('#runner-title').textContent=app.title;frame.srcdoc=makeResponsiveAppDocument(app.code)}
 
 initCommon();renderPublic();initBlogDetail();initRunner();
