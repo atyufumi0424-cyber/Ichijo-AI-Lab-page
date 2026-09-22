@@ -1,0 +1,12 @@
+.privacy-consent { display: flex; grid-template-columns: none; align-items: center; gap: .65rem; font-size: .78rem; }
+.privacy-consent input { width: 1.15rem; height: 1.15rem; flex: 0 0 auto; }
+.privacy-consent a { color: #5423bd; text-decoration: underline; text-underline-offset: .18em; }
+.policy-page { min-height: 100vh; }
+.policy-shell { width: min(860px, calc(100% - 40px)); margin: 0 auto; padding: 130px 0 90px; }
+.policy-shell h1 { margin: .2rem 0 1rem; font-size: clamp(2.2rem, 7vw, 4.5rem); line-height: 1.1; letter-spacing: -.045em; }
+.policy-lead { color: var(--muted); font-size: 1.05rem; }
+.policy-shell section { margin-top: 1.2rem; padding: 1.4rem 1.5rem; border: 1px solid var(--border); border-radius: 18px; background: #fff; box-shadow: 0 12px 35px rgba(53,34,120,.05); }
+.policy-shell h2 { margin: 0 0 .55rem; font-size: 1.12rem; }
+.policy-shell section p { margin: 0; color: var(--muted); }
+.policy-date { margin: 2rem 0; color: var(--muted); font-size: .82rem; }
+@media (max-width: 520px) { .policy-shell { width: min(100% - 28px, 860px); padding-top: 105px; } .policy-shell section { padding: 1.15rem; } }

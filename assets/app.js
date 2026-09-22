@@ -2,6 +2,7 @@ const config = window.ICHJO_LAB_CONFIG || {};
 const db = window.supabase?.createClient(config.supabaseUrl, config.supabasePublishableKey);
 const defaultApps = [];
 const postContentPrefix = '__ICHJO_POST_V1__:';
+const appContentPrefix = '__ICHJO_APP_V1__:';
 const escapeHTML = (value='') => String(value).replace(/[&<>'"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]));
 const formatDate = value => { const d = new Date(`${value}T00:00:00`); return Number.isNaN(d.getTime()) ? value : new Intl.DateTimeFormat('ja-JP',{year:'numeric',month:'long',day:'numeric'}).format(d); };
 function makeResponsiveAppDocument(code=''){
@@ -11,26 +12,30 @@ function makeResponsiveAppDocument(code=''){
   return `${responsiveHead}${code}`;
 }
 const parsePostContent = post => {
-  if(post.image_url)return {text:post.excerpt||'',image:post.image_url};
-  if(!String(post.excerpt||'').startsWith(postContentPrefix))return {text:post.excerpt||'',image:''};
-  try{const content=JSON.parse(post.excerpt.slice(postContentPrefix.length));return {text:content.text||'',image:content.image||''}}catch{return {text:post.excerpt||'',image:''}}
+  if(post.image_url)return {text:post.excerpt||'',image:post.image_url,status:'published'};
+  if(!String(post.excerpt||'').startsWith(postContentPrefix))return {text:post.excerpt||'',image:'',status:'published'};
+  try{const content=JSON.parse(post.excerpt.slice(postContentPrefix.length));return {text:content.text||'',image:content.image||'',status:content.status==='draft'?'draft':'published'}}catch{return {text:post.excerpt||'',image:'',status:'published'}}
+};
+const parseAppContent = app => {
+  if(!String(app.description||'').startsWith(appContentPrefix))return {description:app.description||'',status:'published'};
+  try{const content=JSON.parse(app.description.slice(appContentPrefix.length));return {description:content.description||'',status:content.status==='draft'?'draft':'published'}}catch{return {description:app.description||'',status:'published'}}
 };
 
 async function getApps() {
   if (!db) return defaultApps;
   const {data,error}=await db.from('apps').select('*').order('created_at',{ascending:false});
   if (error) return defaultApps;
-  return data.length ? data : defaultApps;
+  return (data.length ? data : defaultApps).filter(app=>parseAppContent(app).status==='published');
 }
 async function getPosts() {
   if (!db) return [];
   const {data,error}=await db.from('posts').select('*').order('published_on',{ascending:false});
-  return error ? [] : data;
+  return error ? [] : data.filter(post=>parsePostContent(post).status==='published');
 }
 
 async function renderPublic() {
   const appList=document.querySelector('#app-list');
-  if(appList){const apps=await getApps();appList.innerHTML=apps.length?apps.map((app,i)=>{const action=app.code?`<a href="runner.html?id=${encodeURIComponent(app.id)}">ブラウザで開く <span>→</span></a>`:app.url?`<a href="${escapeHTML(app.url)}" target="_blank" rel="noopener">アプリを開く <span>↗</span></a>`:'<span class="coming-soon">COMING SOON</span>';return `<article class="project-card accent-${escapeHTML(app.accent||['pink','cyan','yellow','purple'][i%4])} reveal visible"><div class="project-top"><span>${String(i+1).padStart(2,'0')}</span><small>${escapeHTML(app.category)}</small></div><div class="project-visual" aria-hidden="true"><b>${escapeHTML(app.title.slice(0,1))}</b><i></i></div><h3>${escapeHTML(app.title)}</h3><p>${escapeHTML(app.description)}</p>${action}</article>`}).join(''):'<p class="empty-state">現在、公開中の作品はありません。</p>'}
+  if(appList){const apps=await getApps();appList.innerHTML=apps.length?apps.map((app,i)=>{const content=parseAppContent(app);const action=app.code?`<a href="runner.html?id=${encodeURIComponent(app.id)}">ブラウザで開く <span>→</span></a>`:app.url?`<a href="${escapeHTML(app.url)}" target="_blank" rel="noopener">アプリを開く <span>↗</span></a>`:'<span class="coming-soon">COMING SOON</span>';return `<article class="project-card accent-${escapeHTML(app.accent||['pink','cyan','yellow','purple'][i%4])} reveal visible"><div class="project-top"><span>${String(i+1).padStart(2,'0')}</span><small>${escapeHTML(app.category)}</small></div><div class="project-visual" aria-hidden="true"><b>${escapeHTML(app.title.slice(0,1))}</b><i></i></div><h3>${escapeHTML(app.title)}</h3><p>${escapeHTML(content.description)}</p>${action}</article>`}).join(''):'<p class="empty-state">現在、公開中の作品はありません。</p>'}
   const blogList=document.querySelector('#blog-list');
   if(blogList){const posts=await getPosts();blogList.innerHTML=posts.length?posts.map(post=>{const content=parsePostContent(post);return `<a class="blog-card blog-card-link reveal visible" href="blog.html?id=${encodeURIComponent(post.id)}" aria-label="${escapeHTML(post.title)}を読む">${content.image?`<img class="blog-image" src="${escapeHTML(content.image)}" alt="${escapeHTML(post.title)}" loading="lazy">`:''}<div class="blog-card-body"><h3>${escapeHTML(post.title)}</h3><span class="read-more">記事を読む <b>→</b></span></div></a>`}).join(''):'<p class="empty-state">記事はまだありません。最初の活動記録を準備中です。</p>'}
 }
@@ -41,7 +46,7 @@ async function initBlogDetail(){
   if(!id||!db){root.innerHTML='<p class="article-error">記事を読み込めませんでした。</p>';return}
   const {data:post,error}=await db.from('posts').select('*').eq('id',id).maybeSingle();
   if(error||!post){root.innerHTML='<p class="article-error">記事が見つかりませんでした。</p>';return}
-  const content=parsePostContent(post);document.title=`${post.title} | Ichijo AI Lab`;
+  const content=parsePostContent(post);if(content.status==='draft'){root.innerHTML='<p class="article-error">この記事は現在公開されていません。</p>';return}document.title=`${post.title} | Ichijo AI Lab`;
   root.innerHTML=`<p class="eyebrow">ACTIVITY REPORT</p><time datetime="${escapeHTML(post.published_on)}">${escapeHTML(formatDate(post.published_on))}</time><h1>${escapeHTML(post.title)}</h1>${content.image?`<figure><img src="${escapeHTML(content.image)}" alt="${escapeHTML(post.title)}"></figure>`:''}<div class="article-body"><p>${escapeHTML(content.text).replace(/\n/g,'<br>')}</p></div>`;
 }
 
@@ -72,6 +77,6 @@ async function submitMessage(event){
   }catch(error){console.error(error);status.textContent='送信できませんでした。入力内容を残したまま、時間をおいて再度お試しください。'}finally{button.disabled=false}
 }
 
-async function initRunner(){const frame=document.querySelector('#app-frame');if(!frame)return;const id=new URLSearchParams(location.search).get('id');const {data:app}=db?await db.from('apps').select('*').eq('id',id).maybeSingle():{data:null};const error=document.querySelector('#runner-error');if(!app?.code){error.hidden=false;error.textContent='アプリコードが見つかりません。管理者ページからコードを登録してください。';frame.hidden=true;return}document.title=`${app.title} | Ichijo AI Lab`;document.querySelector('#runner-title').textContent=app.title;frame.srcdoc=makeResponsiveAppDocument(app.code)}
+async function initRunner(){const frame=document.querySelector('#app-frame');if(!frame)return;const id=new URLSearchParams(location.search).get('id');const {data:app}=db?await db.from('apps').select('*').eq('id',id).maybeSingle():{data:null};const error=document.querySelector('#runner-error');if(!app?.code||parseAppContent(app).status==='draft'){error.hidden=false;error.textContent='このアプリは現在公開されていません。';frame.hidden=true;return}document.title=`${app.title} | Ichijo AI Lab`;document.querySelector('#runner-title').textContent=app.title;frame.srcdoc=makeResponsiveAppDocument(app.code)}
 
 initCommon();renderPublic();initBlogDetail();initRunner();

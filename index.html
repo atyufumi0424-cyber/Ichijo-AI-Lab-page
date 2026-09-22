@@ -10,6 +10,7 @@
   <link rel="stylesheet" href="assets/blog-images.css?v=20260920-list">
   <link rel="stylesheet" href="assets/responsive.css">
   <link rel="stylesheet" href="assets/logo.css">
+  <link rel="stylesheet" href="assets/privacy.css?v=20260922">
   <link rel="icon" href="assets/logo-mark.svg" type="image/svg+xml">
 </head>
 <body>
@@ -106,6 +107,7 @@
         <label>メールアドレス<input type="email" name="email" autocomplete="email" required></label>
         <label>内容の種類<select name="type" required><option value="">選択してください</option><option>アプリ・ゲーム制作</option><option>発表・ワークショップ</option><option>共同プロジェクト</option><option>活動への質問</option><option>取材・見学</option><option>その他</option></select></label>
         <label>内容<textarea name="message" rows="6" placeholder="ご相談・ご質問の内容をご記入ください" required></textarea></label>
+        <label class="privacy-consent"><input type="checkbox" required><span><a href="privacy.html" target="_blank">プライバシーポリシー</a>に同意して送信する</span></label>
         <button class="button button-primary" type="submit">送信する</button>
         <p class="form-note">送信内容はIchijo AI Labの管理者に届きます。</p>
         <p class="form-status" role="status"></p>
@@ -115,11 +117,11 @@
 
   <footer class="site-footer">
     <div><a class="brand" href="#top"><img class="brand-mark" src="assets/logo-mark.svg" alt="" width="42" height="42"><span class="brand-wordmark"><span class="brand-name">Ichijo</span><span class="brand-lab">AI LAB</span></span></a><p>Be Pioneers. Create the Future with AI.</p></div>
-    <div class="footer-links"><a href="#about">About</a><a href="#apps">Apps</a><a href="#blog">Blog</a><a href="#request">Contact</a></div>
+    <div class="footer-links"><a href="#about">About</a><a href="#apps">Apps</a><a href="#blog">Blog</a><a href="#request">Contact</a><a href="privacy.html">Privacy</a></div>
     <small>© <span id="year"></span> Ichijo AI Lab</small>
   </footer>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="assets/config.js"></script>
-  <script src="assets/app.js?v=20260920-blog-detail"></script>
+  <script src="assets/app.js?v=20260922-edit-draft"></script>
 </body>
 </html>
